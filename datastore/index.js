@@ -64,13 +64,14 @@ exports.readOne = (id, callback) => {
 };
 
 exports.update = (id, text, callback) => {
-  var item = items[id];
-  if (!item) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    items[id] = text;
-    callback(null, { id, text });
-  }
+  var filePath = path.join(exports.dataDir, `${id}.txt`);
+  fs.open(filePath, 'r+', (err) => {
+    if (err) {
+      callback(new Error(`No item with id: ${id}`));
+    } else {
+      writeTodo(callback, id, text);
+    }
+  });
 };
 
 exports.delete = (id, callback) => {
