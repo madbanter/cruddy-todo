@@ -7,10 +7,22 @@ var items = {};
 
 // Public API - Fix these CRUD functions ///////////////////////////////////////
 
+const writeTodo = (callback, id, text) => {
+  var filePath = path.join(exports.dataDir, `${id}.txt`);
+  fs.writeFile(filePath, text, (err) => {
+    if (err) {
+      throw ('error writing todo');
+    } else {
+      callback(null, { id, text });
+    }
+  });
+};
+
+
 exports.create = (text, callback) => {
-  var id = counter.getNextUniqueId();
-  items[id] = text;
-  callback(null, { id, text });
+  counter.getNextUniqueId((err, id) => {
+    writeTodo(callback, id, text);
+  });
 };
 
 exports.readAll = (callback) => {
