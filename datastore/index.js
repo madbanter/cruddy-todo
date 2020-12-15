@@ -18,6 +18,15 @@ const writeTodo = (callback, id, text) => {
   });
 };
 
+// const readTodo = (callback) => {
+//   fs.readFile(exports.counterFile, (err, fileData) => {
+//     if (err) {
+//       callback(null, 0);
+//     } else {
+//       callback(null, Number(fileData));
+//     }
+//   });
+// };
 
 exports.create = (text, callback) => {
   counter.getNextUniqueId((err, id) => {
@@ -26,10 +35,18 @@ exports.create = (text, callback) => {
 };
 
 exports.readAll = (callback) => {
-  var data = _.map(items, (text, id) => {
-    return { id, text };
+  fs.readdir(exports.dataDir, (err, todos) => {
+    if (err) {
+      callback(err, []);
+    } else {
+      var data = _.map(todos, (id) => {
+        id = path.basename(id, path.extname(id));
+        return { id, text: id };
+      });
+      callback(null, data);
+    }
   });
-  callback(null, data);
+  // callback(null, data);
 };
 
 exports.readOne = (id, callback) => {
