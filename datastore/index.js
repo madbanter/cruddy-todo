@@ -18,15 +18,16 @@ const writeTodo = (callback, id, text) => {
   });
 };
 
-// const readTodo = (callback) => {
-//   fs.readFile(exports.counterFile, (err, fileData) => {
-//     if (err) {
-//       callback(null, 0);
-//     } else {
-//       callback(null, Number(fileData));
-//     }
-//   });
-// };
+const readTodo = (id, callback) => {
+  var filePath = path.join(exports.dataDir, `${id}.txt`);
+  fs.readFile(filePath, '', (err, text) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null, { id, text });
+    }
+  });
+};
 
 exports.create = (text, callback) => {
   counter.getNextUniqueId((err, id) => {
@@ -49,13 +50,17 @@ exports.readAll = (callback) => {
   // callback(null, data);
 };
 
+// callback(new Error(`No item with id: ${id}`));
+
 exports.readOne = (id, callback) => {
-  var text = items[id];
-  if (!text) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    callback(null, { id, text });
-  }
+  var filePath = path.join(exports.dataDir, `${id}.txt`);
+  fs.readFile(filePath, 'utf8', (err, text) => {
+    if (!text) {
+      callback(new Error(`No item with id: ${id}`));
+    } else {
+      callback(null, { id, text });
+    }
+  });
 };
 
 exports.update = (id, text, callback) => {
